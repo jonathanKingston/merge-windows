@@ -1,0 +1,19 @@
+{
+  "permissions": [
+    "windows",
+    "tabs",
+    "contextMenus"
+  ],
+  "description": "Merge multiple windows together",
+  "homepage_url": "https://github.com/jonathanKingston/merge-windows",
+  "manifest_version": 2,
+  "name": "Merge Windows",
+  "version": "1.0",
+  "icons": {
+    "96": "merge.svg"
+  },
+
+  "background": {
+    "scripts": ["background.js"]
+  }
+}
