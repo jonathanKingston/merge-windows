@@ -1,6 +1,5 @@
 {
   "permissions": [
-    "windows",
     "tabs",
     "contextMenus"
   ],
