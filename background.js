@@ -1,17 +1,39 @@
-const windowManager = {
-  init() {
-    browser.contextMenus.create({
-      title: "Merge all windows",
-      contexts: ["all"]
-    });
+class windowManager {
+  constructor() {
     browser.contextMenus.onClicked.addListener(() => {
       this.merge();
     });
-  },
+    browser.windows.onFocusChanged.addListener(() => {
+      this.calculateContextMenu();
+    });
+    this.calculateContextMenu();
+  }
+
+  async getCurrentWindows() {
+    const currentWindow = await browser.windows.getCurrent();
+    const windows = await browser.windows.getAll({});
+    return windows.filter((windowObj) => {
+    console.log(windowObj, currentWindow);
+      return windowObj.incognito === currentWindow.incognito;
+    });
+  }
+
+  async calculateContextMenu() {
+    const windows = await this.getCurrentWindows();
+    const id = "merge-windows";
+    browser.contextMenus.remove(id);
+    if (windows.length > 1) {
+      browser.contextMenus.create({
+        id,
+        title: "Merge all windows",
+        contexts: ["all"]
+      });
+    }
+  }
 
   async merge() {
     const windowMap = new Map();
-    const windows = await browser.windows.getAll();
+    const windows = await this.getCurrentWindows();
     let biggestCount = 0;
     let biggest = null;
     let repin = [];
@@ -39,7 +61,8 @@ const windowManager = {
     repinTabs.forEach((tab) => {
       browser.tabs.update(tab.id, {pinned: true});
     });
+    this.calculateContextMenu();
   }
 };
 
-windowManager.init();
+new windowManager();
