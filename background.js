@@ -13,7 +13,6 @@ class windowManager {
     const currentWindow = await browser.windows.getCurrent();
     const windows = await browser.windows.getAll({});
     return windows.filter((windowObj) => {
-    console.log(windowObj, currentWindow);
       return windowObj.incognito === currentWindow.incognito;
     });
   }
