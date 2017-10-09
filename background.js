@@ -25,7 +25,7 @@ class windowManager {
       browser.contextMenus.create({
         id,
         title: "Merge all windows",
-        contexts: ["all"]
+        contexts: ["all", "tab"]
       });
     }
   }
