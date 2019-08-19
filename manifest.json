@@ -14,5 +14,18 @@
 
   "background": {
     "scripts": ["background.js"]
+  },
+
+  "commands": {
+    "merge-all-windows": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+M",
+        "mac": "MacCtrl+Shift+M"
+      },
+      "description": "Merge all windows into the current one."
+    },
+    "merge-previous-window": {
+      "description": "Merge previously focused window into the current one."
+    }
   }
 }

@@ -5,6 +5,9 @@ class windowManager {
     this.windowHistory[false] = { previous: browser.windows.WINDOW_ID_NONE, current: browser.windows.WINDOW_ID_NONE };
     this.contextMenus = {};
 
+    browser.commands.onCommand.addListener(command => {
+      this.handleCommand(command);
+    });
     browser.contextMenus.onClicked.addListener((info, tab) => {
       this.merge(this.contextMenus[info.menuItemId], tab.windowId);
     });
@@ -12,6 +15,20 @@ class windowManager {
       this.calculateContextMenu();
     });
     this.calculateContextMenu();
+  }
+
+  async handleCommand(command) {
+    const currentWindow = await browser.windows.getCurrent();
+    let target = browser.windows.WINDOW_ID_NONE;
+    if (command === 'merge-all-windows') {
+      target = Infinity;
+    }
+    if (command === 'merge-previous-window') {
+      target = this.windowHistory[currentWindow.incognito].previous;
+    }
+    if (target !== browser.windows.WINDOW_ID_NONE) {
+      this.merge(target, currentWindow.id);
+    }
   }
 
   async getCurrentWindows() {
