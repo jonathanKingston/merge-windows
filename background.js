@@ -59,5 +59,12 @@ browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
  * @param {number} target Window ID to merge all subjects’ tabs into
  */
 function merge (subjects, target) {
-  console.log(subjects, target)
+  subjects.forEach(window => {
+    Promise
+      .all(window.tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false })))
+      .then(unpinned => {
+        browser.tabs.move(window.tabs.map(tab => tab.id), { windowId: target, index: -1 })
+          .then(() => unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true })))
+      })
+  })
 }
