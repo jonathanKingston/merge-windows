@@ -39,7 +39,6 @@ browser.windows.onFocusChanged.addListener(focusedId => {
   })
 })
 browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
-  console.log('menuItem.menuItemId', menuItem.menuItemId)
   if (menuItem.menuItemId === 'merge_all') {
     Promise.all([
       browser.windows.getAll({ windowTypes: ['normal'], populate: true }),
