@@ -9,5 +9,13 @@
   "version": "0.1.0",
   "background": {
     "scripts": ["background.js"]
+  },
+  "commands": {
+    "merge-all-windows": {
+      "description": "Merge all windows into the current one."
+    },
+    "merge-previous-window": {
+      "description": "Merge previously focused window into the current one."
+    }
   }
 }
