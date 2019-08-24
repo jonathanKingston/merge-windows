@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 
 let focusOrder = []
 browser.windows.onRemoved.addListener(removedId => focusOrder.filter(id => removedId !== id))
@@ -6,10 +6,10 @@ browser.windows.onFocusChanged.addListener(focusedId => {
   if (focusedId === browser.windows.WINDOW_ID_NONE) return
   focusOrder = [...new Set([focusedId].concat(focusOrder))]
   Promise.all([
-    browser.windows.getAll({windowTypes: ['normal']}),
+    browser.windows.getAll({ windowTypes: ['normal'] }),
     browser.contextMenus.removeAll()
   ]).then(([windows]) => {
-    if (windows.length < 2) return;
+    if (windows.length < 2) return
     const parentId = browser.contextMenus.create({
       title: 'Merge Windows'
     })
@@ -26,7 +26,7 @@ browser.windows.onFocusChanged.addListener(focusedId => {
         .map(i => i < 0 ? Infinity : i)
         .reduce((a, b) => a === b ? 0 : a - b)
       )
-      .filter((window, index, all) => window.incognito === all[0].incognito)
+      .filter((window, index, sorted) => window.incognito === sorted[0].incognito)
       .splice(1)
       .forEach(window => {
         browser.contextMenus.create({
