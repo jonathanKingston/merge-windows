@@ -15,6 +15,7 @@ browser.windows.onFocusChanged.addListener(focusedId => {
     })
     browser.contextMenus.create({
       title: 'Merge all windows into this one',
+      id: 'merge_all',
       parentId
     })
     browser.contextMenus.create({
@@ -31,8 +32,32 @@ browser.windows.onFocusChanged.addListener(focusedId => {
       .forEach(window => {
         browser.contextMenus.create({
           title: 'Merge with ' + window.title,
+          id: 'merge_' + window.id,
           parentId
         })
       })
   })
 })
+browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
+  console.log('menuItem.menuItemId', menuItem.menuItemId)
+  if (menuItem.menuItemId === 'merge_all') {
+    Promise.all([
+      browser.windows.getAll({ windowTypes: ['normal'], populate: true }),
+      browser.windows.get(currentTab.windowId)
+    ]).then(([all, current]) => merge(
+      all.filter(window => window.id !== current.id && window.incognito === current.incognito),
+      current.id
+    ))
+  } else if (menuItem.menuItemId.substr(0, 6) === 'merge_') {
+    browser.windows.get(parseInt(menuItem.menuItemId.substr(6)), { populate: true })
+      .then(subject => merge([subject], currentTab.windowId))
+  }
+})
+
+/**
+ * @param {windows.Window[]} subjects Array of populated windows.Window objects
+ * @param {number} target Window ID to merge all subjects’ tabs into
+ */
+function merge (subjects, target) {
+  console.log(subjects, target)
+}
