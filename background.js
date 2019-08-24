@@ -6,7 +6,7 @@ browser.windows.onFocusChanged.addListener(focusedId => {
   if (focusedId === browser.windows.WINDOW_ID_NONE) return
   focusOrder = [...new Set([focusedId].concat(focusOrder))]
   Promise.all([
-    browser.windows.getAll({ windowTypes: ['normal'] }),
+    getWindowsSorted(),
     browser.contextMenus.removeAll()
   ]).then(([windows]) => {
     if (windows.length < 2) return
@@ -23,11 +23,6 @@ browser.windows.onFocusChanged.addListener(focusedId => {
       parentId
     })
     windows
-      .sort((a, b) => [focusOrder.indexOf(a.id), focusOrder.indexOf(b.id)]
-        .map(i => i < 0 ? Infinity : i)
-        .reduce((a, b) => a === b ? 0 : a - b)
-      )
-      .filter((window, index, sorted) => window.incognito === sorted[0].incognito)
       .splice(1)
       .forEach(window => {
         browser.contextMenus.create({
@@ -54,35 +49,31 @@ browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
   }
 })
 browser.commands.onCommand.addListener(command => {
-  if (command === 'merge-previous-window') {
-    Promise.all([
-      browser.tabs.query({ active: true, currentWindow: true }),
-      browser.windows.getAll({ windowTypes: ['normal'], populate: true })
-    ])
-    .then(([[tab], windows]) => merge(
-      windows
-        .sort((a, b) => [focusOrder.indexOf(a.id), focusOrder.indexOf(b.id)]
-          .map(i => i < 0 ? Infinity : i)
-          .reduce((a, b) => a === b ? 0 : a - b)
-        )
-        .filter((window, index, sorted) => window.incognito === sorted[0].incognito)
-        .splice(1, 1),
-      tab.windowId,
-      tab.id
-    ))
-  } else if (command === 'merge-all-windows') {
-    Promise.all([
-      browser.tabs.query({ active: true, currentWindow: true }),
-      browser.windows.getAll({ windowTypes: ['normal'], populate: true }),
-      browser.windows.getCurrent()
-    ])
-    .then(([[tab], windows, current]) => merge(
-      windows.filter(window => window.incognito === current.incognite),
-      current.id,
-      tab.id
-    ))
-  }
+  Promise.all([
+    browser.tabs.query({ active: true, currentWindow: true }),
+    getWindowsSorted(true)
+  ]).then(command === 'merge-all-windows'
+    ? ([[tab], windows]) => merge(windows.splice(1), tab.windowId, tab.id)
+    : ([[tab], windows]) => merge(windows.splice(1,1), tab.windowId, tab.id)
+  )
 })
+
+/**
+ * @param {bool} [populate=false] Whether to populate windows.Window objects with tab information
+ */
+function getWindowsSorted(populate = false) {
+  return new Promise(function(resolve, reject) {
+    browser.windows.getAll({ windowTypes: ['normal'], populate })
+      .then(windows => resolve(
+        windows
+          .sort((a, b) => [focusOrder.indexOf(a.id), focusOrder.indexOf(b.id)]
+            .map(i => i < 0 ? Infinity : i)
+            .reduce((a, b) => a === b ? 0 : a - b)
+          )
+          .filter((window, index, sorted) => window.incognito === sorted[0].incognito)
+      ), reject)
+  })
+}
 
 /**
  * @param {windows.Window[]} subjects Array of populated windows.Window objects
