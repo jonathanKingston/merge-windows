@@ -46,25 +46,30 @@ browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
       browser.windows.get(currentTab.windowId)
     ]).then(([all, current]) => merge(
       all.filter(window => window.id !== current.id && window.incognito === current.incognito),
-      current.id
+      current.id,
+      currentTab.id
     ))
   } else if (menuItem.menuItemId.substr(0, 6) === 'merge_') {
     browser.windows.get(parseInt(menuItem.menuItemId.substr(6)), { populate: true })
-      .then(subject => merge([subject], currentTab.windowId))
+      .then(subject => merge([subject], currentTab.windowId, currentTab.id))
   }
 })
 
 /**
  * @param {windows.Window[]} subjects Array of populated windows.Window objects
  * @param {number} target Window ID to merge all subjects’ tabs into
+ * @param {number} active Tab ID of the active tab after merge
  */
-function merge (subjects, target) {
+function merge (subjects, target, active) {
   subjects.forEach(window => {
     Promise
       .all(window.tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false })))
       .then(unpinned => {
         browser.tabs.move(window.tabs.map(tab => tab.id), { windowId: target, index: -1 })
-          .then(() => unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true })))
+          .then(() => {
+            browser.tabs.update(active, { active: true })
+            unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true }))
+          })
       })
   })
 }
