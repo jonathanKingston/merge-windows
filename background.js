@@ -75,15 +75,14 @@ function getWindowsSorted(populate = false) {
  * @param {number} active Tab ID of the active tab after merge
  */
 function merge (subjects, target, active) {
-  subjects.forEach(window => {
-    Promise
-      .all(window.tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false })))
-      .then(unpinned => {
-        browser.tabs.move(window.tabs.map(tab => tab.id), { windowId: target, index: -1 })
-          .then(() => {
-            browser.tabs.update(active, { active: true })
-            unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true }))
-          })
-      })
-  })
+  const tabs = subjects.flatMap(window => window.tabs)
+  Promise
+    .all(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false })))
+    .then(unpinned => {
+      browser.tabs.move(tabs.map(tab => tab.id), { windowId: target, index: -1 })
+        .then(() => {
+          browser.tabs.update(active, { active: true })
+          unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true }))
+        })
+    })
 }
