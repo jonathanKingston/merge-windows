@@ -31,7 +31,7 @@ browser.windows.onFocusChanged.addListener(focusedId => {
       .splice(1)
       .forEach(window => {
         browser.contextMenus.create({
-          title: 'Merge with ' + window.title,
+          title: 'Merge tabs from ' + window.title,
           id: 'merge_' + window.id,
           parentId
         })
