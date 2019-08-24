@@ -3,25 +3,14 @@
     "tabs",
     "contextMenus"
   ],
-  "description": "Merge multiple windows together",
-  "homepage_url": "https://github.com/jonathanKingston/merge-windows",
+  "description": "Options to merge browser windows into one",
   "manifest_version": 2,
   "name": "Merge Windows",
-  "version": "1.0.2",
+  "version": "0.1.0",
   "icons": {
     "96": "merge.svg"
   },
-
   "background": {
     "scripts": ["background.js"]
-  },
-
-  "commands": {
-    "merge-all-windows": {
-      "description": "Merge all windows into the current one."
-    },
-    "merge-previous-window": {
-      "description": "Merge previously focused window into the current one."
-    }
   }
 }
