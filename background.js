@@ -35,14 +35,8 @@ browser.windows.onFocusChanged.addListener(focusedId => {
 })
 browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
   if (menuItem.menuItemId === 'merge_all') {
-    Promise.all([
-      browser.windows.getAll({ windowTypes: ['normal'], populate: true }),
-      browser.windows.get(currentTab.windowId)
-    ]).then(([all, current]) => merge(
-      all.filter(window => window.id !== current.id && window.incognito === current.incognito),
-      current.id,
-      currentTab.id
-    ))
+    getWindowsSorted(true)
+      .then(windows => merge(windows.splice(1), currentTab.windowId, currentTab.id))
   } else if (menuItem.menuItemId.substr(0, 6) === 'merge_') {
     browser.windows.get(parseInt(menuItem.menuItemId.substr(6)), { populate: true })
       .then(subject => merge([subject], currentTab.windowId, currentTab.id))
