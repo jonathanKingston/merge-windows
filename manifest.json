@@ -4,7 +4,7 @@
   "description": "Options to merge browser windows into one",
   "icons": {
       "24": "assets/icon024.png",
-      "128": "assets/icon128.png"
+      "32": "assets/icon032.png"
   },
   "developer": {
       "name": "Martijn van der Ven",

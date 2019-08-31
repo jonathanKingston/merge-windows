@@ -1,4 +1,4 @@
-# ![](assets/icon128.png) Window Merger
+# ![](assets/icon032.png) Window Merger
 
 A Firefox extension for merging windows.
 
