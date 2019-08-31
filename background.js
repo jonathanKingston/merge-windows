@@ -48,15 +48,15 @@ browser.commands.onCommand.addListener(command => {
     getWindowsSorted(true)
   ]).then(command === 'merge-all-windows'
     ? ([[tab], windows]) => merge(windows.splice(1), tab.windowId, tab.id)
-    : ([[tab], windows]) => merge(windows.splice(1,1), tab.windowId, tab.id)
+    : ([[tab], windows]) => merge(windows.splice(1, 1), tab.windowId, tab.id)
   )
 })
 
 /**
  * @param {bool} [populate=false] Whether to populate windows.Window objects with tab information
  */
-function getWindowsSorted(populate = false) {
-  return new Promise(function(resolve, reject) {
+function getWindowsSorted (populate = false) {
+  return new Promise(function (resolve, reject) {
     browser.windows.getAll({ windowTypes: ['normal'], populate })
       .then(windows => resolve(
         windows
