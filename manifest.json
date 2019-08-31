@@ -1,12 +1,14 @@
 {
-  "permissions": [
-    "tabs",
-    "contextMenus"
-  ],
-  "description": "Options to merge browser windows into one",
-  "manifest_version": 2,
   "name": "Window Merger",
   "version": "0.1.0",
+  "description": "Options to merge browser windows into one",
+  "icons": {
+      "128": "assets/icon128.png"
+  },
+  "developer": {
+      "name": "Martijn van der Ven",
+      "url": "https://vanderven.se/martijn/"
+  },
   "background": {
     "scripts": ["background.js"]
   },
@@ -17,5 +19,10 @@
     "merge-previous-window": {
       "description": "Merge previously focused window into the current one."
     }
-  }
+  },
+  "manifest_version": 2,
+  "permissions": [
+    "tabs",
+    "contextMenus"
+  ]
 }
