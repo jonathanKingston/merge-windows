@@ -1,7 +1,11 @@
 'use strict'
 
 let focusOrder = []
-browser.windows.onRemoved.addListener(removedId => focusOrder.filter(id => removedId !== id))
+browser.windows.onRemoved.addListener(removedId => {
+  focusOrder.filter(id => removedId !== id)
+  browser.contextMenus.remove('merge_' + removedId)
+  getWindowsSorted().then(windows => windows.length < 2 && browser.contextMenus.removeAll())
+})
 browser.windows.onFocusChanged.addListener(focusedId => {
   if (focusedId === browser.windows.WINDOW_ID_NONE) return
   focusOrder = [...new Set([focusedId].concat(focusOrder))]
