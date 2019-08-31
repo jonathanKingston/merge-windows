@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "description": "Options to merge browser windows into one",
   "icons": {
+      "16": "assets/icon016.png",
       "24": "assets/icon024.png",
       "32": "assets/icon032.png"
   },
