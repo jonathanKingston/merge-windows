@@ -22,6 +22,13 @@ love semicolons. Make sure to run it under the WebExtensions environment:
 standard --env webextensions
 ```
 
+For further checking the validity of the codebase, make sure to have it linted
+as a browser extension as well:
+
+```
+web-ext lint
+```
+
 ## Licenses
 
 * Everything is released under the BSD Zero Clause License (0BSD). Please see
