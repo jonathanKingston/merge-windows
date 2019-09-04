@@ -26,5 +26,10 @@
   "permissions": [
     "tabs",
     "contextMenus"
-  ]
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "strict_min_version": "62.0"
+    }
+  }
 }
