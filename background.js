@@ -79,7 +79,7 @@ function getWindowsSorted (populate = false) {
  * @param {number} active Tab ID of the active tab after merge
  */
 function merge (subjects, target, active) {
-  const tabs = subjects.flatMap(window => window.tabs)
+  const tabs = subjects.reduce((flat, window) => flat.concat(window.tabs), [])
   Promise
     .all(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false })))
     .then(unpinned => {
