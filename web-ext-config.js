@@ -4,6 +4,7 @@ module.exports = {
     'README.md',
     'assets/contextmenu.png',
     'assets/extensionshortcuts.png',
-    'web-ext-config.js'
+    'web-ext-config.js',
+    'package.json'
   ]
 }
