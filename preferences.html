@@ -1,0 +1,41 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Preferences</title>
+    <style>
+      @import "chrome://global/skin/in-content/common.css";
+      :root /* = html, but higher specificity */ {
+        background-color: var(--in-content-box-background);
+        padding-bottom: 3em;
+      }
+      fieldset {
+        border: 0;
+        margin: 0;
+        padding: 0;
+        padding-bottom: var(--card-padding);
+        margin-top: var(--card-padding);
+        color: var(--in-content-text-color);
+        border-bottom: 1px solid var(--in-content-box-border-color);
+        display: grid;
+        grid-template-columns: 2em 1fr;
+        grid-row-gap: .75em;
+      }
+      legend {
+        padding-bottom: .75em;
+      }
+    </style>
+  </head>
+  <body>
+    <fieldset>
+      <legend>Choose where the context menu is available:</legend>
+      <input type="radio" name="context_menu_location" id="page" value="0">
+      <label for="page">On the web page (default)</label>
+      <input type="radio" name="context_menu_location" id="tab_bar" value="1">
+      <label for="tab_bar">On the tab bar</label>
+      <input type="radio" name="context_menu_location" id="both" value="2">
+      <label for="both">On both the web page and tab bar</label>
+    </fieldset>
+    <script src="preferences.js"></script>
+  </body>
+</html>

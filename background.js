@@ -34,11 +34,13 @@ function drawMenus (focusedId) {
   focusOrder = [...new Set([focusedId].filter(Number).concat(focusOrder))]
   Promise.all([
     getWindowsSorted(),
+    getContextMenuLocations(),
     browser.contextMenus.removeAll()
-  ]).then(([windows]) => {
+  ]).then(([windows, contextMenuLocations]) => {
     if (windows.length < 2) return
     const parentId = browser.contextMenus.create({
-      title: 'Merge Windows'
+      title: 'Merge Windows',
+      contexts: contextMenuLocations
     })
     browser.contextMenus.create({
       title: 'Merge all windows into this one',
@@ -95,3 +97,23 @@ function merge (subjects, target, active) {
         })
     })
 }
+
+function getContextMenuLocations () {
+  return new Promise(function (resolve, reject) {
+    browser.storage.local.get({
+      context_menu_location: 0
+    }).then(({ context_menu_location }) => {
+      const list = ['all', 'tab']
+      if (context_menu_location === 0) {
+        list.pop()
+      } else if (context_menu_location === 1) {
+        list.shift()
+      }
+      resolve(list)
+    }, reject)
+  })
+}
+
+browser.storage.onChanged.addListener(changes => {
+  if ('context_menu_location' in changes) drawMenus()
+})

@@ -23,9 +23,13 @@
     }
   },
   "manifest_version": 2,
+  "options_ui": {
+    "page": "preferences.html"
+  },
   "permissions": [
     "tabs",
-    "contextMenus"
+    "contextMenus",
+    "storage"
   ],
   "browser_specific_settings": {
     "gecko": {
