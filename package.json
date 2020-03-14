@@ -12,6 +12,7 @@
 			"README.md",
 			"assets/contextmenu.png",
 			"assets/extensionshortcuts.png",
+			"assets/preferences.png",
 			"web-ext-config.js",
 			"package.json"
 		]

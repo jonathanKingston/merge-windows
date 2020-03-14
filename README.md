@@ -13,6 +13,8 @@ A Firefox extension for merging windows.
 
 ![](assets/extensionshortcuts.png)
 
+![](assets/preferences.png)
+
 ## Code Style
 
 This extension follows the [JavaScript Standard Style][]. I apologise if you
