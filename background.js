@@ -10,10 +10,10 @@ browser.windows.onFocusChanged.addListener(drawMenus)
 browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
   if (menuItem.menuItemId === 'merge_all') {
     getWindowsSorted(true)
-      .then(windows => merge(windows.splice(1), currentTab.windowId, currentTab.id))
+      .then(windows => merge(windows.splice(1), currentTab.windowId, currentTab.id, currentTab.index))
   } else if (menuItem.menuItemId.substr(0, 6) === 'merge_') {
     browser.windows.get(parseInt(menuItem.menuItemId.substr(6)), { populate: true })
-      .then(subject => merge([subject], currentTab.windowId, currentTab.id))
+      .then(subject => merge([subject], currentTab.windowId, currentTab.id, currentTab.index))
   }
 })
 browser.commands.onCommand.addListener(command => {
@@ -21,8 +21,8 @@ browser.commands.onCommand.addListener(command => {
     browser.tabs.query({ active: true, currentWindow: true }),
     getWindowsSorted(true)
   ]).then(command === 'merge-all-windows'
-    ? ([[tab], windows]) => merge(windows.splice(1), tab.windowId, tab.id)
-    : ([[tab], windows]) => merge(windows.splice(1, 1), tab.windowId, tab.id)
+    ? ([[tab], windows]) => merge(windows.splice(1), tab.windowId, tab.id, tab.index)
+    : ([[tab], windows]) => merge(windows.splice(1, 1), tab.windowId, tab.id, tab.index)
   )
 })
 
@@ -84,13 +84,14 @@ function getWindowsSorted (populate = false) {
  * @param {windows.Window[]} subjects Array of populated windows.Window objects
  * @param {number} target Window ID to merge all subjects’ tabs into
  * @param {number} active Tab ID of the active tab after merge
+ * @param {number} activeIndex Index of the active tab
  */
-function merge (subjects, target, active) {
+function merge (subjects, target, active, activeIndex) {
   const tabs = subjects.reduce((flat, window) => flat.concat(window.tabs), [])
   Promise
-    .all(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false })))
-    .then(unpinned => {
-      browser.tabs.move(tabs.map(tab => tab.id), { windowId: target, index: -1 })
+    .all([browser.storage.local.get({merge_insertion:0})].concat(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false }))))
+    .then(([indexOption, ...unpinned]) => {
+      browser.tabs.move(tabs.map(tab => tab.id), { windowId: target, index: indexOption === 0 ? -1 : ++activeIndex })
         .then(() => {
           browser.tabs.update(active, { active: true })
           unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true }))

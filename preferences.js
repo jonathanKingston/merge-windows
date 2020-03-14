@@ -1,5 +1,6 @@
 browser.storage.local.get({
-  context_menu_location: 0
+  context_menu_location: 0,
+  merge_insertion: 0
 }).then(preferences => {
   for (const preference in preferences) {
     document.querySelector('[name="' + preference + '"][value="' + preferences[preference] + '"]').checked = true
