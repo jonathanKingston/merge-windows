@@ -6,7 +6,30 @@ browser.windows.onRemoved.addListener(removedId => {
   browser.contextMenus.remove('merge_' + removedId)
   getWindowsSorted().then(windows => windows.length < 2 && browser.contextMenus.removeAll())
 })
-browser.windows.onFocusChanged.addListener(focusedId => {
+browser.windows.onFocusChanged.addListener(drawMenus)
+browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
+  if (menuItem.menuItemId === 'merge_all') {
+    getWindowsSorted(true)
+      .then(windows => merge(windows.splice(1), currentTab.windowId, currentTab.id))
+  } else if (menuItem.menuItemId.substr(0, 6) === 'merge_') {
+    browser.windows.get(parseInt(menuItem.menuItemId.substr(6)), { populate: true })
+      .then(subject => merge([subject], currentTab.windowId, currentTab.id))
+  }
+})
+browser.commands.onCommand.addListener(command => {
+  Promise.all([
+    browser.tabs.query({ active: true, currentWindow: true }),
+    getWindowsSorted(true)
+  ]).then(command === 'merge-all-windows'
+    ? ([[tab], windows]) => merge(windows.splice(1), tab.windowId, tab.id)
+    : ([[tab], windows]) => merge(windows.splice(1, 1), tab.windowId, tab.id)
+  )
+})
+
+/**
+ * @param {number} focusedId The windows.Window object ID that last gained focus
+ */
+function drawMenus (focusedId) {
   if (focusedId === browser.windows.WINDOW_ID_NONE) return
   focusOrder = [...new Set([focusedId].concat(focusOrder))]
   Promise.all([
@@ -36,25 +59,7 @@ browser.windows.onFocusChanged.addListener(focusedId => {
         })
       })
   })
-})
-browser.contextMenus.onClicked.addListener((menuItem, currentTab) => {
-  if (menuItem.menuItemId === 'merge_all') {
-    getWindowsSorted(true)
-      .then(windows => merge(windows.splice(1), currentTab.windowId, currentTab.id))
-  } else if (menuItem.menuItemId.substr(0, 6) === 'merge_') {
-    browser.windows.get(parseInt(menuItem.menuItemId.substr(6)), { populate: true })
-      .then(subject => merge([subject], currentTab.windowId, currentTab.id))
-  }
-})
-browser.commands.onCommand.addListener(command => {
-  Promise.all([
-    browser.tabs.query({ active: true, currentWindow: true }),
-    getWindowsSorted(true)
-  ]).then(command === 'merge-all-windows'
-    ? ([[tab], windows]) => merge(windows.splice(1), tab.windowId, tab.id)
-    : ([[tab], windows]) => merge(windows.splice(1, 1), tab.windowId, tab.id)
-  )
-})
+}
 
 /**
  * @param {bool} [populate=false] Whether to populate windows.Window objects with tab information
