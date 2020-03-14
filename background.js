@@ -31,7 +31,7 @@ browser.commands.onCommand.addListener(command => {
  */
 function drawMenus (focusedId) {
   if (focusedId === browser.windows.WINDOW_ID_NONE) return
-  focusOrder = [...new Set([focusedId].concat(focusOrder))]
+  focusOrder = [...new Set([focusedId].filter(Number).concat(focusOrder))]
   Promise.all([
     getWindowsSorted(),
     browser.contextMenus.removeAll()
