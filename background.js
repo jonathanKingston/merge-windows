@@ -89,7 +89,7 @@ function getWindowsSorted (populate = false) {
 function merge (subjects, target, active, activeIndex) {
   const tabs = subjects.reduce((flat, window) => flat.concat(window.tabs), [])
   Promise
-    .all([browser.storage.local.get({merge_insertion:0})].concat(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false }))))
+    .all([browser.storage.local.get({ merge_insertion: 0 })].concat(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false }))))
     .then(([indexOption, ...unpinned]) => {
       browser.tabs.move(tabs.map(tab => tab.id), { windowId: target, index: indexOption === 0 ? -1 : ++activeIndex })
         .then(() => {
@@ -103,11 +103,11 @@ function getContextMenuLocations () {
   return new Promise(function (resolve, reject) {
     browser.storage.local.get({
       context_menu_location: 0
-    }).then(({ context_menu_location }) => {
+    }).then(({ context_menu_location: preference }) => {
       const list = ['all', 'tab']
-      if (context_menu_location === 0) {
+      if (preference === 0) {
         list.pop()
-      } else if (context_menu_location === 1) {
+      } else if (preference === 1) {
         list.shift()
       }
       resolve(list)
