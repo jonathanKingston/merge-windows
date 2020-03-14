@@ -2,5 +2,18 @@
 	"devDependencies": {
 		"standard": "^14.3.1",
 		"web-ext": "^4.1.0"
+	},
+	"scripts": {
+		"test": "standard --env webextensions && web-ext lint"
+	},
+	"webExt": {
+		"ignoreFiles": [
+			"LICENSE",
+			"README.md",
+			"assets/contextmenu.png",
+			"assets/extensionshortcuts.png",
+			"web-ext-config.js",
+			"package.json"
+		]
 	}
 }
