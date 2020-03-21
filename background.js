@@ -90,8 +90,11 @@ function merge (subjects, target, active, activeIndex) {
   const tabs = subjects.reduce((flat, window) => flat.concat(window.tabs), [])
   Promise
     .all([browser.storage.local.get({ merge_insertion: 0 })].concat(tabs.filter(tab => tab.pinned).map(tab => browser.tabs.update(tab.id, { pinned: false }))))
-    .then(([indexOption, ...unpinned]) => {
-      browser.tabs.move(tabs.map(tab => tab.id), { windowId: target, index: indexOption === 0 ? -1 : ++activeIndex })
+    .then(([{ merge_insertion: mergeInsertion }, ...unpinned]) => {
+      const moveIndex = mergeInsertion === 0 ? -1 : ++activeIndex
+      const moveList = tabs.map(tab => tab.id)
+      if (moveIndex !== -1) moveList.reverse()
+      browser.tabs.move(moveList, { windowId: target, index: moveIndex })
         .then(() => {
           browser.tabs.update(active, { active: true })
           unpinned.forEach(tab => browser.tabs.update(tab.id, { pinned: true }))
